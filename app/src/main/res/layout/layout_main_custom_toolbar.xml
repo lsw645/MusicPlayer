@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RadioGroup xmlns:android="http://schemas.android.com/apk/res/android"
+            xmlns:tools="http://schemas.android.com/tools"
+            android:layout_width="wrap_content"
+            android:layout_height="?android:attr/actionBarSize"
+            android:layout_gravity="end"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            tools:showIn="@layout/activity_main">
+
+    <RadioButton
+        android:id="@+id/rdo_play_list"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:button="@drawable/selector_main_nav_play_list"
+        tools:button="@drawable/ic_main_nav_play_list_selected"
+        tools:checked="true"
+        />
+
+    <RadioButton
+        android:id="@+id/rdo_music"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:button="@drawable/selector_main_nav_music"
+        tools:button="@drawable/ic_main_nav_music"
+        />
+
+    <RadioButton
+        android:id="@+id/rdo_local_files"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:button="@drawable/selector_main_nav_local_files"
+        tools:button="@drawable/selector_main_nav_local_files"
+
+        />
+
+    <RadioButton
+        android:id="@+id/rdo_settings"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:button="@drawable/selector_main_nav_settings"
+        tools:button="@drawable/selector_main_nav_settings"
+        />
+</RadioGroup>

@@ -1,0 +1,24 @@
+<resources>
+    <string name="app_name">MusicPlayer</string>
+
+    <!-- Activity/Fragment Titles -->
+    <string name="mp.fragment.title.play_list">Play List</string>
+    <string name="mp.fragment.title.music">Music</string>
+    <string name="mp.fragment.title.local_files">Local Files</string>
+    <string name="mp.fragment.title.settings">Settings</string>
+
+    <!-- Main -->
+    <string-array name="mp_main_titles">
+        <item>@string/mp.fragment.title.play_list</item>
+        <item>@string/mp.fragment.title.music</item>
+        <item>@string/mp.fragment.title.local_files</item>
+        <item>@string/mp.fragment.title.settings</item>
+    </string-array>
+
+    <!-- Play Lists -->
+    <string name="mp.play_list.favorite">Favorite</string>
+
+    <!-- Music -->
+    <string name="mp.music.default_duration">00:00</string>
+
+</resources>
