@@ -237,4 +237,76 @@ public class FolderPresenter implements FolderContract.Presenter {
                 });
         mSubscriptions.add(subscription);
     }
+
+    @Override
+    public void addFolders(List<File> folders, final List<Folder> existedFolders) {
+        Subscription subscription = Observable.from(folders)
+                .filter(new Func1<File, Boolean>() {
+                    @Override
+                    public Boolean call(File file) {
+                        for (Folder folder : existedFolders) {
+                            if (file.getAbsolutePath().equals(file.getPath())) {
+                                return false;
+                            }
+                        }
+                        return true;
+                    }
+                })
+                .flatMap(new Func1<File, Observable<Folder>>() {
+                    @Override
+                    public Observable<Folder> call(File file) {
+                        Folder folder = new Folder();
+                        folder.setName(file.getName());
+                        folder.setPath(file.getAbsolutePath());
+                        List<Song> musicFile = FileUtils.musicFiles(file);
+                        folder.setSongs(musicFile);
+                        folder.setNumOfSongs(musicFile.size());
+                        return Observable.just(folder);
+                    }
+                })
+                .toList()
+                .flatMap(new Func1<List<Folder>, Observable<List<Folder>>>() {
+                    @Override
+                    public Observable<List<Folder>> call(List<Folder> folders) {
+                        return mAppRepository.create(folders);
+                    }
+                })
+                .doOnNext(new Action1<List<Folder>>() {
+                    @Override
+                    public void call(final List<Folder> folders) {
+                        Collections.sort(folders, new Comparator<Folder>() {
+                            @Override
+                            public int compare(Folder o1, Folder o2) {
+                                return o1.getName().compareToIgnoreCase(o2.getName());
+                            }
+                        });
+                    }
+                })
+                .compose(RxUtils.<List<Folder>>rxSchedulerHelper())
+                .subscribe(new Subscriber<List<Folder>>() {
+
+                    @Override
+                    public void onStart() {
+                        mView.showLoading();
+                    }
+
+                    @Override
+                    public void onCompleted() {
+                        mView.hideLoading();
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        mView.hideLoading();
+                        mView.handleError(e);
+                    }
+
+                    @Override
+                    public void onNext(List<Folder> folders) {
+                        mView.onFoldersAdded(folders);
+                    }
+                });
+        mSubscriptions.add(subscription);
+
+    }
 }

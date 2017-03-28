@@ -16,6 +16,7 @@ import com.lxw.musicplayer.base.BaseFragment;
 import com.lxw.musicplayer.base.adapter.OnItemClickListener;
 import com.lxw.musicplayer.data.model.Folder;
 import com.lxw.musicplayer.data.model.PlayList;
+import com.lxw.musicplayer.event.AddFolderEvent;
 import com.lxw.musicplayer.event.PlayListCreatedEvent;
 import com.lxw.musicplayer.ui.common.DefaultDividerDecoration;
 import com.lxw.musicplayer.ui.details.PlayListDetailsActivity;
@@ -24,9 +25,14 @@ import com.lxw.musicplayer.ui.playlist.AddToPlayListDialogFragment;
 import com.lxw.musicplayer.ui.playlist.EditPlayListDialogFragment;
 import com.orhanobut.logger.Logger;
 
+import java.io.File;
 import java.util.List;
 
 import butterknife.BindView;
+import rx.Subscription;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.functions.Action1;
+import rx.schedulers.Schedulers;
 
 /**
  * description... //TODO
@@ -76,7 +82,6 @@ public class FolderFragment extends BaseFragment
         mFolderAdapter.setAddFolderCallback(this);
         recyclerView.setAdapter(mFolderAdapter);
         recyclerView.addItemDecoration(new DefaultDividerDecoration());
-        List<Folder> folders=mFolderAdapter.getData();
         new FolderPresenter(this).subscribe();
     }
 
@@ -85,6 +90,12 @@ public class FolderFragment extends BaseFragment
         return R.layout.fragment_folder;
     }
 
+    /**
+     * RecyclerView item的图标点击事件，创建一个popMenu，进行文件夹的增加、删除、刷新音乐列表和删除文件夹
+     *
+     * @param actionView 点击的图标,创建的popMenu会创建在该图标下面
+     * @param position   点击对应的第几个item，通过position，获得对应的data
+     */
     @Override
     public void onAction(View actionView, final int position) {
         final Folder folder = mFolderAdapter.getItem(position);
@@ -94,15 +105,17 @@ public class FolderFragment extends BaseFragment
             @Override
             public boolean onMenuItemClick(MenuItem item) {
                 switch (item.getItemId()) {
+                    //添加音乐列表
                     case R.id.menu_item_add_to_play_list:
-                       new  AddToPlayListDialogFragment().setCallback(new AddToPlayListDialogFragment.Callback() {
-                           @Override
-                           public void onPlayListSelected(PlayList playList) {
-                               mFolderPresenter.addFolderToPlayList(folder, playList);
-                           }
-                       }).show(getFragmentManager().beginTransaction(),"AddToPlayList");
+                        new AddToPlayListDialogFragment().setCallback(new AddToPlayListDialogFragment.Callback() {
+                            @Override
+                            public void onPlayListSelected(PlayList playList) {
+                                mFolderPresenter.addFolderToPlayList(folder, playList);
+                            }
+                        }).show(getFragmentManager().beginTransaction(), "AddToPlayList");
 
                         break;
+                    //创建音乐列表
                     case R.id.menu_item_create_play_list:
                         PlayList playList = PlayList.fromFolder(folder);
                         EditPlayListDialogFragment.editPlayList(playList)
@@ -120,10 +133,12 @@ public class FolderFragment extends BaseFragment
                                 .show(getFragmentManager().beginTransaction(), "CreatePlayList");
 
                         break;
+                    //刷新
                     case R.id.menu_item_refresh:
                         mUpdateIndex = position;
                         mFolderPresenter.refreshFolder(folder);
                         break;
+                    //删除文件夹
                     case R.id.menu_item_delete:
                         mDeleteIndex = position;
                         mFolderPresenter.deleteFolder(folder);
@@ -163,7 +178,7 @@ public class FolderFragment extends BaseFragment
 
     @Override
     public void onFoldersLoaded(List<Folder> folders) {
-        Logger.d(folders.size()+"sdadadadada");
+        Logger.d(folders.size() + "sdadadadada");
         mFolderAdapter.setData(folders);
         mFolderAdapter.notifyDataSetChanged();
         List<Folder> folderList = mFolderAdapter.getData();
@@ -188,5 +203,42 @@ public class FolderFragment extends BaseFragment
         Toast.makeText(getActivity(), getString(R.string.mp_play_list_created, playList.getName()), Toast.LENGTH_SHORT).show();
     }
 
+    @Override
+    public void onFoldersAdded(List<Folder> folders) {
+        int newItemCount = folders.size() - (mFolderAdapter.getData() == null ? 0 : mFolderAdapter.getData().size());
+        mFolderAdapter.setData(folders);
+        mFolderAdapter.notifyDataSetChanged();
+        mFolderAdapter.updateFooterView();
+        if (newItemCount > 0) {
+            String toast = getResources().getQuantityString(
+                    R.plurals.mp_folders_created_formatter,
+                    newItemCount,
+                    newItemCount
+            );
+            Toast.makeText(getActivity(), toast, Toast.LENGTH_SHORT).show();
+        }
+    }
 
+    @Override
+    protected Subscription subscribeEvents() {
+        return RxBus.getInstance()
+                .toObservable()
+                .observeOn(AndroidSchedulers.mainThread())
+                .doOnNext(new Action1<Object>() {
+                    @Override
+                    public void call(Object o) {
+                        if (o instanceof AddFolderEvent) {
+                            onAddFolders((AddFolderEvent) o);
+                        }
+                    }
+                })
+                .subscribeOn(Schedulers.io())
+                .subscribe(RxBus.defaultSubscriber());
+    }
+
+    private void onAddFolders(AddFolderEvent event) {
+        final List<File> folders = event.folders;
+        final List<Folder> existedFolders = mFolderAdapter.getData();
+        mFolderPresenter.addFolders(folders, existedFolders);
+    }
 }

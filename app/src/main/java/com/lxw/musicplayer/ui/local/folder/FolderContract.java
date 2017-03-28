@@ -5,6 +5,7 @@ import com.lxw.musicplayer.base.BaseView;
 import com.lxw.musicplayer.data.model.Folder;
 import com.lxw.musicplayer.data.model.PlayList;
 
+import java.io.File;
 import java.util.List;
 
 /**
@@ -33,6 +34,8 @@ public interface FolderContract {
         void onFolderDeleted(Folder folder);
 
         void onPlayListCreated(PlayList playList);
+
+        void onFoldersAdded(List<Folder> folders);
     }
 
     interface Presenter extends BasePresenter {
@@ -45,6 +48,8 @@ public interface FolderContract {
         void createPlayList(PlayList playList);
 
         void addFolderToPlayList(Folder folder, PlayList playList);
+
+        void addFolders(List<File> folders, List<Folder> existedFolders);
     }
 
 }

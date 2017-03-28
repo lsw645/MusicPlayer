@@ -37,6 +37,13 @@
     <string name="mp.local_files.folder_list.add_folder">Add Folder</string>
     <string name="mp.local_files.folder_list.end_summary_formatter">%d folders in total</string>
 
+    <!-- Local Files - File System -->
+    <plurals name="mp_folders_created_formatter">
+        <item quantity="one">%d new folder created</item>
+        <item quantity="other">%d new folders created</item>
+    </plurals>
+
+
     <!-- Menu -->
     <string name="mp.menu.add_to_play_list">Add to play list</string>
     <string name="mp.menu.create_play_list">Create play list</string>

@@ -77,7 +77,7 @@ public class FolderAdapter extends AbstractFooterAdapter<Folder,FolderItemView> 
         return mFooterView;
     }
 
-    private void updateFooterView() {
+    public void updateFooterView() {
         if (textViewSummary == null) return;
 
         int itemCount = getItemCount() - 1; // real data count

@@ -47,10 +47,10 @@ public class LocalFilesFragment extends BaseFragment {
 
     private void initFragments() {
         AllLocalMusicFragment allLocalMusicFragment = AllLocalMusicFragment.newInstance();
-        FolderFragment folderFragemnt = FolderFragment.newInstance();
+        FolderFragment folderFragment = FolderFragment.newInstance();
         FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
         mFragmentList.add(allLocalMusicFragment);
-        mFragmentList.add(folderFragemnt);
+        mFragmentList.add(folderFragment);
         fragmentTransaction.add(R.id.layout_fragment_container, mFragmentList.get(0), mFragmentList.get(0).getTag());
         fragmentTransaction.add(R.id.layout_fragment_container, mFragmentList.get(1), mFragmentList.get(1).getTag());
         fragmentTransaction.hide(mFragmentList.get(1));
