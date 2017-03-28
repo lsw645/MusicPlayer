@@ -26,4 +26,17 @@
     <color name="mp.theme.dark_blue.textColorSecondary">#3C5F78</color>
     <color name="mp.popupMenu.background">#B4D2E0</color>
 
+    <color name="mp.line">#3DDDF9FF</color>
+    <color name="mp.list.background">#1ADDF9FF</color>
+
+    <color name="mp.list.text.title">#DDF9FF</color>
+    <color name="mp.list.text.title.selected">#3C5F78</color>
+    <color name="mp.list.text.hint">#9CBDCC</color>
+    <color name="mp.list.text.hint.selected">#7C3C5F78</color>
+    <color name="mp.list.scrollThumb">#99DDF9FF</color>
+    <color name="mp.text.hint">#9CBDCC</color>
+
+    <!-- CharacterView -->
+    <color name="mp.characterView.background">#9CBDCC</color>
+    <color name="mp.characterView.textColor">@color/mp.list.text.title</color>
 </resources>
